@@ -21,6 +21,7 @@ class ConLL12Converter:
             raise TypeError('self.text is not a string')
 
         self.tags = self.get_tags()
+        self.lemmaDic = self.get_lemma_dict()
 
     def get_tags(self):
             """
@@ -83,13 +84,6 @@ class ConLL12Converter:
             splited_tags_lemma = [[g.lemmatise(tag[0].decode('utf-8'))[0], tag[0],
                                    tag[1]] for tag in splited_tags[:-1]]
 
-            # Build empty dictionary with lemmas as key
-            lemmaDic = {key: [] for [key, value, token] in splited_tags_lemma}
-
-            # Fill the dictionary with all values
-            [lemmaDic[key].append(value.decode('utf-8')) for [key, value, token] in
-                splited_tags_lemma if value not in lemmaDic[key]]
-
             # Update self.tags
             tags = splited_tags_lemma
 
@@ -100,6 +94,16 @@ class ConLL12Converter:
 
             return splited_tags_lemma
 
+    def get_lemma_dict(self):
+
+        # Build empty dictionary with lemmas as key
+        lemmaDic = {key: [] for [key, value, token] in self.tags}
+
+        # Fill the dictionary with all values
+        [lemmaDic[key].append(value.decode('utf-8')) for [key, value, token] in
+            self.tags if value not in lemmaDic[key]]
+
+        return lemmaDic
 
 
 
@@ -111,4 +115,4 @@ if __name__ == '__main__':
 
     conversion = ConLL12Converter(text, 'data')
 
-    print(conversion.tags)
+    print(conversion.lemmaDic)
